@@ -9,4 +9,8 @@ public class Address {
     public  Location location;
     public double eta;
 
+    public Address() {
+        
+    }
+
 }
