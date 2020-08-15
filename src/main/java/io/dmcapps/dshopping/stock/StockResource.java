@@ -43,28 +43,29 @@ public class StockResource {
     @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Stock.class, type = SchemaType.ARRAY)))
     @APIResponse(responseCode = "204", description = "No stocks")
     @GET
+    @Path("/stocks")
     public Response getAllStoreStocks() {
         List<Stock> stocks = service.findAllStocks();
         LOGGER.debug("Total number of stocks " + stocks);
         return Response.ok(stocks).build();
     }
 
-    @Operation(summary = "Returns a stock for a given identifier")
+    @Operation(summary = "Returns a stock list for a given product search and location")
     @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Stock.class)))
-    @APIResponse(responseCode = "204", description = "The stock is not found for a given identifier")
+    @APIResponse(responseCode = "204", description = "The stock is not found for given parameters")
     @GET
-    @Path("/stocks")
+    @Path("/stocks/search")
     public Response searchStock(
         @Parameter(description = "Store identifier", required = true)
-        @QueryParam("location-lon") Double lon,
+        @QueryParam("lon") Double lon,
         @Parameter(description = "Store identifier", required = true)
-        @QueryParam("location-lat") Double lat,
+        @QueryParam("lat") Double lat,
         @Parameter(description = "Product identifier", required = true)
-        @QueryParam("product-search") String searchString) {
+        @QueryParam("search") String searchString) {
         
         String storeId = null;
         String productId = null; 
-        Stock stock = service.findStockById(storeId, productId);
+        List<Stock> stock = service.findStocks(searchString, lon, lat);
         if (stock != null) {
             LOGGER.debug("Found stock " + stock);
             return Response.ok(stock).build();
